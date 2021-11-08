@@ -1,0 +1,12 @@
+dist/*
+build/*
+mocker/*
+scripts/*
+node_modules/*
+readme
+src/assets
+.eslintrc.js
+craco.config.js
+babel.config.js
+commitlint.config.js
+tsconfig.json
