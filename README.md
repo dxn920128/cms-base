@@ -15,7 +15,9 @@
 <div align=center>
 <img src="https://gitee.com/dingxn/blog-img/raw/master/cms-base/QQ20211107-225848@2x.png" width="700"  />
 </div>
+
 ## 目录结构
+
 ```
 ├── README.md
 ├── craco.config.js
@@ -50,22 +52,27 @@
 ```
 ## 安装 
 1.下载项目代码
+
 ```
 https://github.com/dxn920128/cms-base.git
 cd cms-base
 ```
 2.安装依赖
+
 ```
 npm install
 or
 yarn install
 ```
+
 3.启动服务器
+
 ```
 npm run start
 or
 npm run start:mocker
 ```
+
 4.启动完成后打开浏览器访问 http://localhost:4000。接下来就可以进行业务开发了。
 
 
