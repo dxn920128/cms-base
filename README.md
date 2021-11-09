@@ -10,6 +10,11 @@
 - 组件
   
 ```
+
+
+<div align=center>
+<img src="https://gitee.com/dingxn/blog-img/raw/master/cms-base/QQ20211107-225848@2x.png" width="700"  />
+</div>
 ## 目录结构
 ```
 ├── README.md
