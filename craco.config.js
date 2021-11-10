@@ -1,11 +1,15 @@
 const path = require('path')
 const CracoLessPlugin = require('craco-less')
 const apiMocker = require('mocker-api')//使用mocker-api库
-const CompressionWebpackPlugin = require('compression-webpack-plugin')//
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const webpack = require('webpack')
 const pathResolve = pathUrl => path.join(__dirname, pathUrl)
-const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const smp = new SpeedMeasurePlugin();
+
+const WebpackBar = require('webpackbar');
 
 module.exports = {
   plugins: [
@@ -41,18 +45,26 @@ module.exports = {
     optimization: {
       splitChunks: {
         chunks: 'async',
-        minSize: 300000,
+        minSize: 40000,
         maxSize: 1000000,
         name: true,
         maxAsyncRequests: 5, // 最大异步请求数
         maxInitialRequests: 4, // 页面初始化最大异步请求数
         automaticNameDelimiter: '~', // 解决命名冲突
         cacheGroups: {
-          common: {
-            name: 'chunk-common',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](react|react-dom|react-router|redux-thunk|)[\\/]/,
-            priority: -10
+          vender: {
+            name: 'vendor',
+            test: /[\\/]node_modules[\\/]/,
+            chunks: 'async',
+            priority: 10,
+            enforce: true
+          },
+          react: {
+            name: 'react',
+            test: (module) => /react|redux/.test(module.context),
+            chunks: 'initial',
+            priority: 11,
+            enforce: true
           },
           antd: {
             name: 'antd',
@@ -62,13 +74,15 @@ module.exports = {
             chunks: 'async',
             priority: 11,
             enforce: true
-          },
+          }
         }
       }
     },
-    webpack: {
+    configureWebpack: smp.wrap({
       plugins: [
-        // 打压缩包
+        // new BundleAnalyzerPlugin(),
+        new WebpackBar(),
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
         new CompressionWebpackPlugin({
           algorithm: 'gzip',
           test: new RegExp(
@@ -81,19 +95,43 @@ module.exports = {
         }),
         new UglifyJsPlugin({
           uglifyOptions: {
+            warnings: false,
             compress: {
-              warnings: false,
               drop_debugger: true,
-              drop_console: true
-            }
+              drop_console: true,
+            },
           },
           sourceMap: false,
-          parallel: true
-        }),
-        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-        new SimpleProgressWebpackPlugin()
+          parallel: true,
+        })
       ]
-    }
+    }),
+    // plugins: [
+    //   // new BundleAnalyzerPlugin(),
+    //   new WebpackBar(),
+    //   new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    //   new CompressionWebpackPlugin({
+    //     algorithm: 'gzip',
+    //     test: new RegExp(
+    //       '\\.(' +
+    //       ['js', 'css'].join('|') +
+    //       ')$'
+    //     ),
+    //     threshold: 1024,
+    //     minRatio: 0.8
+    //   }),
+    //   new UglifyJsPlugin({
+    //     uglifyOptions: {
+    //       warnings: false,
+    //       compress: {
+    //         drop_debugger: true,
+    //         drop_console: true,
+    //       },
+    //     },
+    //     sourceMap: false,
+    //     parallel: true,
+    //   })
+    // ]
   },
   devServer: {
     proxy: {
@@ -105,16 +143,11 @@ module.exports = {
         }
       }
     },
-    //如果使用mocker-api库
     before (app) {
+      //如果使用mocker-api库
       if (process.env.MOCKER_ENV) {
         apiMocker(app, path.resolve('./mocker/index.js'), {})
       }
-    }
-  },
-  server: {
-    before (app) {
-      apiMocker(app, path.resolve('./mocker/index.js'), {})
     }
   }
 }
