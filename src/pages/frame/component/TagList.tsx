@@ -66,7 +66,7 @@ const TagList: React.FC = () => {
                   dispatch(deleteTags(tag.url))
                 }}
                 closable={!(config.HOME_ROUTER_PATH === tag.url)}
-                color={currentPath === tag.url ? 'geekblue' : 'gold'}
+                color={currentPath === tag.url ? 'processing':'warning' }
                 onClick={() => {
                   history.push(tag.url)
                 }}
@@ -79,7 +79,7 @@ const TagList: React.FC = () => {
       </Scrollbars>
       <div style={{ zIndex: 100 }}>
         <Dropdown overlay={menuItem} placement="bottomLeft">
-          <Tag className="mgr-16">
+          <Tag className="mgr-16" color='error'>
             关闭
             <DownOutlined />
           </Tag>
