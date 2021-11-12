@@ -1,3 +1,4 @@
+import { Button,ConfigProvider } from 'antd'
 import React from 'react'
 
 const Home: React.FC = () => {
@@ -16,6 +17,13 @@ const Home: React.FC = () => {
                     transform: 'translate(-10%, -10%)'
                 }}>
                 <p>asdasdasd</p>
+                <Button onClick={()=>{
+ConfigProvider.config({
+    theme: {
+      primaryColor: '#25b864'
+    }
+  })
+                }}>aaa</Button>
             </div>
         </div>
     )
